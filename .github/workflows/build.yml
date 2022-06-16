@@ -28,7 +28,6 @@ jobs:
           sudo mkdir -p /opt/applications/zeeven/back-zeeven
           sudo chmod ugo+rwx /opt/applications/zeeven/back-zeeven
 
-
   copy-configs:
     name: "copy configs"
     runs-on: ubuntu-latest
@@ -91,7 +90,6 @@ jobs:
           tags: simachille/back-zeeven:lastest
           labels: ${{ steps.meta.outputs.labels }}
   
-
   run-container:
     name: "Run container"
     runs-on: ubuntu-latest

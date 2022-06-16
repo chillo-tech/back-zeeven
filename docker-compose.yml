@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  back-zeeven:
+    container_name: back-zeeven
+    # The official v2 Traefik docker image
+    image: simachille/back-zeeven:latest
+    # Enables the web UI and tells Traefik to listen to docker
+   
+    restart: always
+    ports:
+      # The HTTP port
+      - "8087:8087"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=recette"
+      #- "logging.level.org.springframework=TRACE"
+      - "logging.level.org.springframework.web.cors.DefaultCorsProcessor=debug"
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.back-zeeven.rule=Headers(`X-Host`, `api.zeeven.chillo.fr`)"
+      - "traefik.docker.network=applications-network"
+      - "traefik.http.routers.service.middlewares=serviceheaders"
+      - "traefik.http.middlewares.serviceheaders.headers.accesscontrolalloworiginlist=*" 
+
+
+    networks:
+      - applications-network
+networks:
+  applications-network:
+    external: true
+    name: applications-network

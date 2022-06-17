@@ -16,9 +16,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(consumes = "application/json", produces = "application/json")
 public class AccountController {
 
+    private final UtilisateursService utilisateursService;
+    private final AuthenticationManager authenticationManager;
+
     @RequestMapping(value = "connexion", method = RequestMethod.POST)
     public ResponseEntity<?> createAuthenticationToken(@RequestBody final JwtRequest authenticationRequest) throws Exception {
-
-        return ResponseEntity.ok(new JwtResponse("token"));
+        this.authenticate(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+        final String token = this.utilisateursService.connexion(authenticationRequest);
+        return ResponseEntity.ok(new JwtResponse(token));
     }
+
+    private void authenticate(final String username, final String password) throws Exception {
+        try {
+            this.authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+        } catch (final DisabledException e) {
+            throw new Exception("USER_DISABLED", e);
+        } catch (final BadCredentialsException e) {
+            throw new Exception("INVALID_CREDENTIALS", e);
+        }
+    }
+
 }
